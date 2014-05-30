@@ -62,3 +62,75 @@ Proof.
   - intros. 
     simpl. apply insert_urejen. apply insert_urejen. apply H. 
 Qed.
+
+
+
+Fixpoint st_pojavitev (x : Z) (l : list Z) : nat :=
+  match l with
+  | nil => 0
+  | (h :: l') =>
+      match Z_eq_dec x h with
+      | left _ => S (st_pojavitev x l')
+      | right _ => st_pojavitev x l'
+      end
+  end.
+ 
+ (*enakost dveh seznamov*)
+Definition enaka (l1 l2 : list Z) : Prop :=
+  forall (x:Z), st_pojavitev x l1 = st_pojavitev x l2.
+
+Lemma enaka_refl: forall (l : list Z), enaka l l.
+Proof.
+ induction l.
+ - unfold enaka. auto.
+ - unfold enaka. auto.
+Qed.
+
+Lemma enaka_simetr: forall (l l' : list Z), enaka l  l' -> enaka l' l.
+Proof.
+ induction l.
+ - unfold enaka. auto.
+ -  unfold enaka. auto.
+Qed.
+
+Lemma enaka_tr: forall l l' l'':list Z, enaka l l' -> enaka l' l'' -> enaka l l''.
+Proof.
+ intros. intro x.
+ SearchAbout trans_eq.
+ eapply trans_eq.
+ - auto.
+ - auto.
+Qed.
+
+Lemma enaka_nov_elt: forall (x : Z) (l l' : list Z), enaka l l' -> enaka (x :: l) (x :: l').
+Proof.
+ intros. intro x'. simpl. case (Z_eq_dec x' x).
+ - auto.
+ - auto.
+Qed.
+
+Lemma enakost_zamenjan: forall (x y : Z) (l l' : list Z), enaka l l' -> enaka (x :: y :: l) (y :: x :: l').
+Proof.
+ intros. intro. simpl.
+ case (Z_eq_dec x0 y). 
+ case (Z_eq_dec x0 x).
+ - case (H x0).  auto.
+ - auto.
+ - case (H x0). auto. 
+Qed.
+
+Lemma vstavi_enakost: forall (x : Z) (l : list Z), enaka (x :: l) (vstavi x l).
+Proof.
+  unfold enaka. intros. simpl. elim (Z.eq_dec x x0).
+admit. 
+admit. 
+Qed.
+
+Theorem deluje2: forall (l l': list Z), l' = insertion l -> enaka l l'.
+Proof.
+  induction l. intros.
+  - unfold enaka. simpl. rewrite H. auto.
+  - intros. simpl in H.  rewrite H. intro.
+admit.  
+Qed.
+
