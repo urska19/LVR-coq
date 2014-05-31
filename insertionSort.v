@@ -158,4 +158,4 @@ Theorem pravilnost2: forall l : list Z, urejen (insertion l).
 Proof.
  induction l; simpl; auto.
  apply vstavi_urejen; auto.
-Defined.
+Qed.
